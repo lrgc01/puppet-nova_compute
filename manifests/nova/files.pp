@@ -25,28 +25,24 @@ class nova_compute::nova::files {
 
    file { "${_nova_config_dir}":     # resource type file and filename
       ensure  => directory,
-      mode    => '0755',
+      group   => 'nova',
+      require => Package['nova-compute'],
       recurse => remote,
       source  => 'puppet:///modules/nova_compute/nova',
    }
-   # Rebuild the database, but only when the file changes
+   # Redo filters, but only when the file changes
    exec { update_nova_files:
       path        => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
       subscribe   => File["${_nova_config_dir}"],
       refreshonly => true,
       command	  => "sed -e 's/__2ND_IP__/'$::ipaddress_enp0s5f1'/' < ${_nova_config_dir}/nova.conf.tmpl > ${_nova_config_dir}/nova.conf",
+      notify      => Exec['restart_nova'],
    }
-
-#   file { "${_nova_config_dir}/nova-compute.conf":     # resource type file and filename
-#      ensure  => present,    	# make sure it exists
-#      mode    => '0644',     	# file permissions
-#      content => "
-#[DEFAULT]
-#compute_driver=libvirt.LibvirtDriver
-#[libvirt]
-#virt_type=qemu
-#
-#",  
-#   }
+   # restart for each change in file
+   exec { restart_nova:
+      path        => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
+      refreshonly => true,
+      command     => "systemctl restart nova-compute",
+   }
 
 } # nova::files
