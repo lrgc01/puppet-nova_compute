@@ -23,22 +23,27 @@ class nova_compute::neutron::files {
       }
    }
 
+   if has_key($::networking,'primary') {
+      $provider_interface = $::networking['primary']
+   } else {
+      $provider_interface = 'enp0s5f0'
+   }
    $_neutron_plugin_dir = "${_neutron_config_dir}/plugins"
    $_neutron_ml2_ini_file = "${_neutron_plugin_dir}/ml2/linuxbridge_agent.ini"
 
-   file { "${_neutron_config_dir}":     # resource type file and filename
+   file { "${_neutron_config_dir}":     # resource type directory (and its tree) in this case
       ensure  => directory,
       group   => 'neutron',
       require => Package[neutron_bridge],
       recurse => remote,
       source  => 'puppet:///modules/nova_compute/neutron',
    }
-   # Redo filters, but only when the file changes
-   exec { update_neutron_files:
-      path        => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
-      subscribe   => File["${_neutron_config_dir}"],
-      refreshonly => true,
-      command	  => "sed -e 's/__1ST_IFACE__/enp0s5f0/' -e 's/__2ND_IP__/'$::ipaddress_enp0s5f1'/' < ${_neutron_ml2_ini_file}.tmpl > ${_neutron_ml2_ini_file}",
+   # Do/Redo filters, but only when the file changes
+   file { $_neutron_ml2_ini_file:
+      ensure    => present,
+      group     => 'neutron',
+      subscribe => File["${_neutron_config_dir}"],
+      content   => template('nova_compute/neutron/plugins/ml2/linuxbridge_agent.ini.erb'),
       notify      => Exec['restart_neutron'],
    }
    # restart for each change in file

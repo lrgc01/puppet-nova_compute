@@ -23,20 +23,20 @@ class nova_compute::nova::files {
       }
    }
 
-   file { "${_nova_config_dir}":     # resource type file and filename
+   file { "${_nova_config_dir}":     # resource type directory (and its tree) in this case
       ensure  => directory,
       group   => 'nova',
       require => Package['nova-compute'],
       recurse => remote,
       source  => 'puppet:///modules/nova_compute/nova',
    }
-   # Redo filters, but only when the file changes
-   exec { update_nova_files:
-      path        => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
-      subscribe   => File["${_nova_config_dir}"],
-      refreshonly => true,
-      command	  => "sed -e 's/__2ND_IP__/'$::ipaddress_enp0s5f1'/' < ${_nova_config_dir}/nova.conf.tmpl > ${_nova_config_dir}/nova.conf",
-      notify      => Exec['restart_nova'],
+   # Do/Redo filters, but only when the file changes
+   file { "${_nova_config_dir}/nova.conf":
+      ensure    => present,
+      group     => 'nova',
+      subscribe => File["${_nova_config_dir}"],
+      content   => template('nova_compute/nova/nova.conf.erb'),
+      notify    => Exec['restart_nova'],
    }
    # restart for each change in file
    exec { restart_nova:
