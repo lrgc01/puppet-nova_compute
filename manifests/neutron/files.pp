@@ -1,5 +1,38 @@
-
-class nova_compute::neutron::files {
+class nova_compute::neutron::files (
+     $dbtype  = 'mysql',
+     $dbname  = 'neutron',
+     $dbuser  = 'neutron',
+     $dbpass  = 'neatomos3',
+     $dbhost  = 'ostackdb',
+     $neutronuser  = $dbuser,
+     $neutronpass  = $dbpass,
+     $glanceuser  = $dbuser,
+     $glancepass  = $dbpass,
+     $admindbpass = 'keatomos3',
+     $memcache_host = 'memcache',
+     $controller_host = 'controller',
+     $mq_proto = 'rabbit',
+     $mq_user  = 'openstack',
+     $mq_pass  = 'raatomos3',
+     $mq_host  = 'rabbitmq',
+     $ostack_region       = 'RegionOne',
+     $bstp_adm_port       = '35357/v3/',
+     $bstp_int_port       = '5000/v3/',
+     $bstp_pub_port       = '5000/v3/',
+     $nova_adm_port       = '8774/v2.1',
+     $nova_int_port       = '8774/v2.1',
+     $nova_pub_port       = '8774/v2.1',
+     $placem_adm_port     = '8778',
+     $placem_int_port     = '8778',
+     $placem_pub_port     = '8778',
+     $glance_adm_port     = '9292',
+     $glance_int_port     = '9292',
+     $glance_pub_port     = '9292',
+     $neutron_adm_port       = '9696',
+     $neutron_int_port       = '9696',
+     $neutron_pub_port       = '9696',
+     $memcache_port = '11211',
+) {
    case $::operatingsystem {
       'Ubuntu': {
          if $::lsbdistcodename == 'xenial' {
@@ -44,6 +77,13 @@ class nova_compute::neutron::files {
       group     => 'neutron',
       subscribe => File["${_neutron_config_dir}"],
       content   => template('nova_compute/neutron/plugins/ml2/linuxbridge_agent.ini.erb'),
+      notify      => Exec['restart_neutron'],
+   }
+   file { '/etc/neutron/neutron.conf':
+      ensure    => present,
+      group     => 'neutron',
+      subscribe => File["${_neutron_config_dir}"],
+      content   => template('nova_compute/neutron/neutron.conf.erb'),
       notify      => Exec['restart_neutron'],
    }
    # restart for each change in file

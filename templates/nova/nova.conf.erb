@@ -1,8 +1,8 @@
 [DEFAULT]
 lock_path = /var/lock/nova
 state_path = /var/lib/nova
-transport_url = rabbit://openstack:raostack3@controller
-my_ip = <%= @ipaddress_enp0s5f1 %>
+transport_url = <%=@mq_proto%>://<%=@mq_user%>:<%=@mq_pass%>@<%=@mq_host%>
+my_ip = <%=@ipaddress_enp0s5f1%>
 use_neutron = True
 firewall_driver = nova.virt.firewall.NoopFirewallDriver
 
@@ -12,8 +12,10 @@ auth_strategy = keystone
 [api_database]
 [barbican]
 [cache]
+
 [cells]
 enable = False
+
 [cinder]
 [compute]
 [conductor]
@@ -24,38 +26,44 @@ enable = False
 [database]
 [ephemeral_storage_encryption]
 [filter_scheduler]
+
 [glance]
-api_servers = http://controller:9292
+api_servers = http://<%=@controller_host%>:<%=@glance_pub_port%>
+
 [guestfs]
 [healthcheck]
 [hyperv]
 [ironic]
 [key_manager]
 [keystone]
+
 [keystone_authtoken]
-auth_uri = http://controller:5000/v3/
-auth_url = http://controller:35357/v3/
-memcached_servers = controller:11211
+auth_uri = http://<%=@controller_host%>:<%=@bstp_int_port%>
+auth_url = http://<%=@controller_host%>:<%=@bstp_adm_port%>
+memcached_servers = <%=@memcache_host%>:<%=@memcache_port%>
 auth_type = password
 project_domain_name = default
 user_domain_name = default
 project_name = service
-username = nova
-password = unoostack3
+username = <%=@novauser%>
+password = <%=@novapass%>
+
 [libvirt]
 [matchmaker_redis]
 [metrics]
 [mks]
+
 [neutron]
-url = http://controller:9696
-auth_url = http://controller:35357/v3/
+url = http://<%=@controller_host%>:<%=@neutron_pub_port%>
+auth_url = http://<%=@controller_host%>:<%=@bstp_adm_port%>
 auth_type = password
 project_domain_name = default
 user_domain_name = default
-region_name = RegionOne
+region_name = <%=@ostack_region%>
 project_name = service
-username = neutron
-password = uneostack3
+username = <%=@neutronuser%>
+password = <%=@neutronpass%>
+
 [notifications]
 [osapi_v21]
 [oslo_concurrency]
@@ -68,15 +76,17 @@ lock_path = /var/lib/nova/tmp
 [oslo_middleware]
 [oslo_policy]
 [pci]
+
 [placement]
-os_region_name = RegionOne
+os_region_name = <%=@ostack_region%>
 project_domain_name = Default
 project_name = service
 auth_type = password
 user_domain_name = Default
-auth_url = http://controller:35357/v3/
-username = placement
-password = uplostack3
+auth_url = http://<%=@controller_host%>:<%=@bstp_adm_port%>
+username = <%=@placemuser%>
+password = <%=@placempass%>
+
 [quota]
 [rdp]
 [remote_debug]
@@ -88,11 +98,13 @@ password = uplostack3
 [upgrade_levels]
 [vendordata_dynamic_auth]
 [vmware]
+
 [vnc]
 enabled = True
 vncserver_listen = 0.0.0.0
 vncserver_proxyclient_address = $my_ip
-novncproxy_base_url = http://controller:6080/vnc_auto.html
+novncproxy_base_url = http://<%=@controller_host%>:6080/vnc_auto.html
+
 [workarounds]
 [wsgi]
 [xenserver]

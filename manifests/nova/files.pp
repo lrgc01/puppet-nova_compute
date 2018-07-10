@@ -1,5 +1,41 @@
-
-class nova_compute::nova::files {
+class nova_compute::nova::files (
+     $dbtype  = 'mysql',
+     $dbname  = 'nova',
+     $apidbname  = 'nova_api',
+     $dbuser  = 'nova',
+     $dbpass  = 'noatomos3',
+     $dbhost  = 'ostackdb',
+     $novauser  = $dbuser,
+     $novapass  = $dbpass,
+     $neutronuser  = 'neutron',
+     $neutronpass  = 'neatomos3',
+     $placemuser  = 'placement',
+     $placempass  = 'platomos3',
+     $admindbpass = 'keatomos3',
+     $memcache_host = 'memcache',
+     $controller_host = 'controller',
+     $mq_proto = 'rabbit',
+     $mq_user  = 'openstack',
+     $mq_pass  = 'raatomos3',
+     $mq_host  = 'rabbitmq',
+     $ostack_region       = 'RegionOne',
+     $bstp_adm_port       = '35357/v3/',
+     $bstp_int_port       = '5000/v3/',
+     $bstp_pub_port       = '5000/v3/',
+     $nova_adm_port       = '8774/v2.1',
+     $nova_int_port       = '8774/v2.1',
+     $nova_pub_port       = '8774/v2.1',
+     $placem_adm_port     = '8778',
+     $placem_int_port     = '8778',
+     $placem_pub_port     = '8778',
+     $glance_adm_port     = '9292',
+     $glance_int_port     = '9292',
+     $glance_pub_port     = '9292',
+     $neutron_adm_port       = '9696',
+     $neutron_int_port       = '9696',
+     $neutron_pub_port       = '9696',
+     $memcache_port       = '11211',
+) {
    case $::operatingsystem {
       'Ubuntu': {
          if $::lsbdistcodename == 'xenial' {
