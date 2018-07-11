@@ -1,4 +1,4 @@
-### Very basic Puppet module to install nova-compute for Ubuntu 16.04
+### Very basic Puppet module to install nova-compute on Ubuntu 16.04
 
 (And only Nova Compute!)
 
