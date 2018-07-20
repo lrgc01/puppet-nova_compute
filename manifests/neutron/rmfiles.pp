@@ -28,7 +28,7 @@ class nova_compute::neutron::rmfiles {
 
    file { "${_neutron_config_dir}":     # resource type file and filename
       ensure  => absent,
-      require => Package[neutron_bridge],
+      require => Package['neutron-linuxbridge-agent'],
    }
 
 } # neutron::files

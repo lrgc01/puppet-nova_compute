@@ -1,13 +1,13 @@
-class nova_compute::nova_uninstall {
+class nova_compute::nova_uninstall (
+   $ensure  = 'absent',
+) {
 
   package { 'nova-compute':
-     ensure => absent,
-     name => 'nova-compute',
-     require => Service['stop-nova-compute'],
+     ensure => $ensure,
+     require => Service['nova-compute'],
   }
 
-  service { 'stop-nova-compute':
-     name   => 'nova-compute',
+  service { 'nova-compute':
      enable => false,
      ensure => stopped,
   }

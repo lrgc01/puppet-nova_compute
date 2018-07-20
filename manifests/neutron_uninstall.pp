@@ -1,8 +1,9 @@
-class nova_compute::neutron_uninstall {
+class nova_compute::neutron_uninstall (
+    $ensure   = 'absent',
+) {
 
-  package { 'neutron_bridge':
-     ensure => absent,
-     name => 'neutron-linuxbridge-agent',
+  package { 'neutron-linuxbridge-agent':
+     ensure => $ensure,
      require => Service['neutron-linuxbridge-agent'],
   }
 
