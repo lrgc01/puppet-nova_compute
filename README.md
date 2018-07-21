@@ -2,5 +2,6 @@
 
 (And only Nova Compute!)
 
- - Install nova and its dependencies to create a new node
- - Install neutron and its dependencies (compute part)
+ - Install nova and its dependencies to create a new node.
+ - Install neutron and its dependencies (linux bridge agent).
+ - Uninstall and optionaly purge files.
