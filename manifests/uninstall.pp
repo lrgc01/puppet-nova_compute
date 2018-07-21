@@ -1,6 +1,6 @@
 
 class nova_compute::uninstall (
-  $remove_reqs  =  false,
+  $autoremove   =  false,
   $ensure       =  'absent',
 ) {
 
@@ -11,7 +11,7 @@ class nova_compute::uninstall (
       ensure  => $ensure,
    }
 
-   if $remove_reqs {
+   if $autoremove {
       exec { 'apt-get -y autoremove': 
          path    => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
       }
